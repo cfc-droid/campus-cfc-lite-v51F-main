@@ -7,10 +7,11 @@
 
 (function () {
 
-  const API = "https://cfc-lock-proxy.onrender.com";
-  const CFC_LOCK_ENFORCE = true;
+  // 🔒 MODO ESTÁTICO (Campus Finanzas)
+  const API = null;               // ⛔ Backend deshabilitado
+  const CFC_LOCK_ENFORCE = false; // ⛔ No expulsión remota
 
-  console.log("🧩 QA-SYNC | CFC_LOCK_CORE V72-ENFORCE REAL cargado");
+  console.log("🧩 QA-SYNC | CFC_LOCK_CORE V72 cargado (MODO ESTÁTICO)");
 
   /* -------------------------------------------
      Obtener MSCU local
@@ -19,7 +20,9 @@
     const email = localStorage.getItem("CFC_EMAIL");
     const device_id = localStorage.getItem("CFC_DEVICE_ID");
     const session_id = localStorage.getItem("CFC_SESSION_ID");
-    return (email && device_id && session_id) ? { email, device_id, session_id } : null;
+    return (email && device_id && session_id)
+      ? { email, device_id, session_id }
+      : null;
   }
 
   /* -------------------------------------------
@@ -38,9 +41,10 @@
   }
 
   /* -------------------------------------------
-     EXPULSIÓN REAL
+     EXPULSIÓN REAL (DESHABILITADA EN MODO ESTÁTICO)
   ------------------------------------------- */
   async function forceLogout(reason, email, device_id) {
+    if (!CFC_LOCK_ENFORCE) return;
 
     if (window.__CFC_FORCELOGOUT_ACTIVE__) return;
     window.__CFC_FORCELOGOUT_ACTIVE__ = true;
@@ -61,9 +65,10 @@
   }
 
   /* -------------------------------------------
-     Heartbeat
+     Heartbeat (NO-OP en modo estático)
   ------------------------------------------- */
   async function sendHeartbeat(s) {
+    if (!API) return;
     try {
       const r = await fetch(`${API}/heartbeat`, {
         method: "POST",
@@ -72,14 +77,15 @@
       });
       console.log("❤️ [HEARTBEAT]", await r.json());
     } catch (e) {
-      console.warn("⚠️ Heartbeat error", e);
+      console.warn("⚠️ Heartbeat deshabilitado (modo estático)");
     }
   }
 
   /* -------------------------------------------
-     Update-session
+     Update-session (NO-OP en modo estático)
   ------------------------------------------- */
   async function sendUpdate(s) {
+    if (!API) return;
     try {
       const r = await fetch(`${API}/update-session`, {
         method: "POST",
@@ -90,36 +96,52 @@
       console.log("🟡 [UPDATE-SESSION]", json);
 
       if (CFC_LOCK_ENFORCE && json.status === "invalid") {
-        await forceLogout("Sesión iniciada en otro dispositivo (UPDATE)", s.email, s.device_id);
+        await forceLogout(
+          "Sesión iniciada en otro dispositivo (UPDATE)",
+          s.email,
+          s.device_id
+        );
       }
 
     } catch (e) {
-      console.warn("⚠️ update-session error", e);
+      console.warn("⚠️ update-session deshabilitado (modo estático)");
     }
   }
 
   /* -------------------------------------------
-     Check Render híbrido
+     Check remoto (NO-OP en modo estático)
   ------------------------------------------- */
   async function checkRemote(s) {
+    if (!API) return;
     try {
-      const r = await fetch(`${API}/check-session?email=${s.email}&device_id=${s.device_id}`);
+      const r = await fetch(
+        `${API}/check-session?email=${s.email}&device_id=${s.device_id}`
+      );
       const json = await r.json();
       console.log("🌐 [CHECK-SESSION]", json);
 
-      if (CFC_LOCK_ENFORCE && (json.status === "invalid" || json.status === "expired")) {
-        await forceLogout("Sesión iniciada en otro dispositivo (CHECK)", s.email, s.device_id);
+      if (
+        CFC_LOCK_ENFORCE &&
+        (json.status === "invalid" || json.status === "expired")
+      ) {
+        await forceLogout(
+          "Sesión iniciada en otro dispositivo (CHECK)",
+          s.email,
+          s.device_id
+        );
       }
 
     } catch (e) {
-      console.warn("⚠️ check-session error", e);
+      console.warn("⚠️ check-session deshabilitado (modo estático)");
     }
   }
 
   /* -------------------------------------------
-     LOOP HEARTCORE
+     LOOP HEARTCORE (INERTE EN ESTÁTICO)
   ------------------------------------------- */
   async function heartcoreLoop() {
+
+    if (!API) return;
 
     const s = getLocalSession();
     if (!s) return;

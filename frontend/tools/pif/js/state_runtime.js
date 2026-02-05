@@ -16,6 +16,10 @@ const runtimeState = {
 =============================== */
 
 export function setAnswer(qid, optionKey) {
+
+  if (!qid) return;
+  if (!optionKey) return;
+
   runtimeState.answersByQid[qid] = optionKey;
 }
 
@@ -77,10 +81,32 @@ export function isTestMode() {
 
 /* ===============================
    QUIZ COMPLETION
+   VALIDACIÓN FUERTE
 =============================== */
 
 export function isQuizComplete(totalQuestions = 30) {
-  return Object.keys(runtimeState.answersByQid).length === totalQuestions;
+
+  const answers = runtimeState.answersByQid;
+
+  const keys = Object.keys(answers);
+
+  if (keys.length !== totalQuestions) return false;
+
+  for (const qid of keys) {
+
+    const value = answers[qid];
+
+    if (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      typeof value !== "string"
+    ) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /* ===============================

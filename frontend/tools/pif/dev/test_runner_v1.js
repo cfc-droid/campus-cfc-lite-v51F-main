@@ -1,21 +1,11 @@
 /* ============================================================
    PIF DEV — TEST RUNNER V1 — CFC CONTRACT V13
-   Ejecuta presets → profile engine → valida salida
-
-   NO UI
-   NO runtime mutation real
-   Solo QA técnico de engines
    ============================================================ */
 
 import { TEST_PRESETS_V1, validateTestPresets } from "./test_presets_v1.js";
-
 import { calculateProfileKey } from "../engine/profile_engine_v1.js";
 import { getRouteForProfile } from "../engine/route_engine_v1.js";
 
-
-/* ============================================================
-   RUN SINGLE TEST
-   ============================================================ */
 
 function runSinglePreset(profileKey, preset) {
 
@@ -26,9 +16,9 @@ function runSinglePreset(profileKey, preset) {
         const calculatedProfile = calculateProfileKey(preset);
         const route = getRouteForProfile(calculatedProfile);
 
-        console.log("Preset:", profileKey);
-        console.log("Calculated profile:", calculatedProfile);
-        console.log("Route:", route?.name || "SIN RUTA");
+        console.log("Preset esperado:", profileKey);
+        console.log("Perfil calculado:", calculatedProfile);
+        console.log("Ruta:", route?.name);
 
         if (calculatedProfile !== profileKey) {
             console.warn("⚠ Perfil esperado ≠ perfil calculado");
@@ -43,10 +33,6 @@ function runSinglePreset(profileKey, preset) {
     console.groupEnd();
 }
 
-
-/* ============================================================
-   RUN ALL PRESETS
-   ============================================================ */
 
 export function runAllPifTests() {
 
@@ -69,10 +55,6 @@ export function runAllPifTests() {
     console.groupEnd();
 }
 
-
-/* ============================================================
-   AUTO RUN (solo si se importa manualmente en consola)
-   ============================================================ */
 
 if (typeof window !== "undefined") {
     window.runAllPifTests = runAllPifTests;

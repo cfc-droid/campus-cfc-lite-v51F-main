@@ -1,11 +1,5 @@
 /* ============================================================
    PIF MAIN ORCHESTRATOR — CFC CONTRACT V13
-   Bootstrap completo del sistema
-   Controla:
-   ✔ Login guard
-   ✔ Test mode
-   ✔ Quiz UI
-   ✔ Results UI
    ============================================================ */
 
 import { enforcePifLogin } from "./guard_login.js";
@@ -31,7 +25,6 @@ function getQueryParams() {
         test: params.get("test"),
         perfil: params.get("perfil")
     };
-
 }
 
 
@@ -59,11 +52,7 @@ function loadPreset(profileKey) {
    ============================================================ */
 
 function startQuizFlow() {
-
-    renderQuiz(() => {
-        renderResults();
-    });
-
+    renderQuiz();
 }
 
 
@@ -74,12 +63,19 @@ function startQuizFlow() {
 function startTestFlow(profileKey) {
 
     setTestMode(true);
-
     loadPreset(profileKey);
-
     renderResults();
 
 }
+
+
+/* ============================================================
+   ROUTER EVENTS
+   ============================================================ */
+
+window.addEventListener("pif:quiz:completed", () => {
+    renderResults();
+});
 
 
 /* ============================================================
@@ -90,25 +86,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
 
-        /* ---------- Login obligatorio ---------- */
-
         enforcePifLogin();
 
-
-        /* ---------- Leer query params ---------- */
-
         const { test, perfil } = getQueryParams();
-
-
-        /* ---------- Test Mode ---------- */
 
         if (test === "1" && perfil) {
             startTestFlow(perfil);
             return;
         }
-
-
-        /* ---------- Flujo normal ---------- */
 
         startQuizFlow();
 

@@ -1,7 +1,7 @@
 /* =========================================================
 scoring_map_v1.js
 CORE MATEMÁTICO DEL PIF
-Contrato V13 compatible con profile_engine_v1
+SAFE MVP — evita scoring vacío
 ========================================================= */
 
 export const SCORING_MAP_V1 = {
@@ -30,55 +30,53 @@ export const SCORING_MAP_V1 = {
     B: { COMPENSADOR_EMOCIONAL: 2 },
     C: { COMPENSADOR_EMOCIONAL: 1 },
     D: { DESORDENADO_CRONICO: 2 },
-    E: { EVITADOR_FINANANCIERO_FIX__E: 0 } // placeholder local para no romper estructura
+    E: { EVITADOR_FINANCIERO: 2 }
   },
 
-  /* =====================================================
-     PLACEHOLDER SEGURO 4–30
-     (no rompe engine; simplemente no suma puntaje)
-     ===================================================== */
+  /* ===== PLACEHOLDER SEGURO 4–30 ===== */
 
-  4: placeholder(),
-  5: placeholder(),
-  6: placeholder(),
-  7: placeholder(),
-  8: placeholder(),
-  9: placeholder(),
-  10: placeholder(),
-  11: placeholder(),
-  12: placeholder(),
-  13: placeholder(),
-  14: placeholder(),
-  15: placeholder(),
-  16: placeholder(),
-  17: placeholder(),
-  18: placeholder(),
-  19: placeholder(),
-  20: placeholder(),
-  21: placeholder(),
-  22: placeholder(),
-  23: placeholder(),
-  24: placeholder(),
-  25: placeholder(),
-  26: placeholder(),
-  27: placeholder(),
-  28: placeholder(),
-  29: placeholder(),
-  30: placeholder()
+  4: safePlaceholder(),
+  5: safePlaceholder(),
+  6: safePlaceholder(),
+  7: safePlaceholder(),
+  8: safePlaceholder(),
+  9: safePlaceholder(),
+  10: safePlaceholder(),
+  11: safePlaceholder(),
+  12: safePlaceholder(),
+  13: safePlaceholder(),
+  14: safePlaceholder(),
+  15: safePlaceholder(),
+  16: safePlaceholder(),
+  17: safePlaceholder(),
+  18: safePlaceholder(),
+  19: safePlaceholder(),
+  20: safePlaceholder(),
+  21: safePlaceholder(),
+  22: safePlaceholder(),
+  23: safePlaceholder(),
+  24: safePlaceholder(),
+  25: safePlaceholder(),
+  26: safePlaceholder(),
+  27: safePlaceholder(),
+  28: safePlaceholder(),
+  29: safePlaceholder(),
+  30: safePlaceholder()
 
 };
 
 
 /* =====================================================
-   FUNCIONES INTERNAS
+SAFE PLACEHOLDER
+Siempre suma mínimo scoring
 ===================================================== */
 
-function placeholder() {
+function safePlaceholder() {
   return {
-    A: {},
-    B: {},
-    C: {},
-    D: {},
-    E: {}
+    A: { DESORDENADO_CRONICO: 1 },
+    B: { DESORDENADO_CRONICO: 1 },
+    C: { DESORDENADO_CRONICO: 1 },
+    D: { DESORDENADO_CRONICO: 1 },
+    E: { DESORDENADO_CRONICO: 1 }
   };
 }

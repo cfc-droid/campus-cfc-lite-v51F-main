@@ -41,6 +41,58 @@ function validateScoringMap() {
 
 
 /* ============================================================
+   QID NORMALIZER
+   - Acepta qid como: 1 | "1" | "Q01" | "q01"
+   - Busca en SCORING_MAP_V1 por ambas variantes
+   ============================================================ */
+
+function resolveQuestionMap(qidRaw) {
+
+    // 1) intento directo
+    if (SCORING_MAP_V1[qidRaw]) {
+        return { key: qidRaw, map: SCORING_MAP_V1[qidRaw] };
+    }
+
+    // 2) normalización string
+    const s = String(qidRaw).trim();
+
+    // "Q01" -> 1 (y viceversa)
+    if (/^q\d{1,3}$/i.test(s)) {
+
+        const n = parseInt(s.slice(1), 10);
+
+        if (SCORING_MAP_V1[n]) {
+            return { key: n, map: SCORING_MAP_V1[n] };
+        }
+
+        const qKey = `Q${String(n).padStart(2, "0")}`;
+
+        if (SCORING_MAP_V1[qKey]) {
+            return { key: qKey, map: SCORING_MAP_V1[qKey] };
+        }
+    }
+
+    // "1" -> 1 y "Q01"
+    if (/^\d{1,3}$/.test(s)) {
+
+        const n = parseInt(s, 10);
+
+        if (SCORING_MAP_V1[n]) {
+            return { key: n, map: SCORING_MAP_V1[n] };
+        }
+
+        const qKey = `Q${String(n).padStart(2, "0")}`;
+
+        if (SCORING_MAP_V1[qKey]) {
+            return { key: qKey, map: SCORING_MAP_V1[qKey] };
+        }
+    }
+
+    return { key: s, map: null };
+}
+
+
+/* ============================================================
    SCORE ACCUMULATOR
    ============================================================ */
 
@@ -48,18 +100,18 @@ function accumulateScores(answersByQid) {
 
     const scoreByProfile = {};
 
-    Object.entries(answersByQid).forEach(([qid, optionKey]) => {
+    Object.entries(answersByQid).forEach(([qidRaw, optionKey]) => {
 
-        const qMap = SCORING_MAP_V1[qid];
+        const { key: resolvedKey, map: qMap } = resolveQuestionMap(qidRaw);
 
         if (!qMap) {
-            throw new Error(`[PIF] Falta scoring map para pregunta ${qid}`);
+            throw new Error(`[PIF] Falta scoring map para pregunta ${resolvedKey}`);
         }
 
         const optionMap = qMap[optionKey];
 
-        if (!optionMap) {
-            throw new Error(`[PIF] Falta scoring para ${qid} opción ${optionKey}`);
+        if (!optionMap || typeof optionMap !== "object") {
+            throw new Error(`[PIF] Falta scoring para ${resolvedKey} opción ${optionKey}`);
         }
 
         Object.entries(optionMap).forEach(([profileKey, weight]) => {

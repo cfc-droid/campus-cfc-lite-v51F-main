@@ -1,1 +1,55 @@
-/* PIF CSS placeholder */
+/* PIF CSS — solo variables globales del Campus */
+#pif-app {
+  margin-top: 14px;
+}
+
+.pif-panel {
+  background: var(--color-panel);
+  color: var(--color-text);
+  border: 1px solid rgba(255, 215, 0, 0.18);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.pif-title {
+  margin: 0 0 10px 0;
+  color: var(--color-accent);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.pif-sub {
+  margin: 0 0 12px 0;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.pif-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.pif-btn {
+  background: linear-gradient(90deg, #d4af37, #ffd700);
+  color: #000;
+  font-weight: 800;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pif-btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.45;
+  filter: grayscale(40%);
+}
+
+.pif-btn.secondary {
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+}

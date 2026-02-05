@@ -1,124 +1,82 @@
 /* =========================================================
 scoring_map_v1.js
 CORE MATEMÁTICO DEL PIF
-
-Reglas:
-✔ Peso permitido: 1 | 2 | 3
-✔ Máximo 2 perfiles por opción
-✔ Solo enteros
-✔ Auditable
-✔ 30 preguntas exactas
-✔ Opciones A–E por pregunta
+Contrato V13 compatible con profile_engine_v1
 ========================================================= */
 
 export const SCORING_MAP_V1 = {
 
-  /* =====================================================
-  EJEMPLOS COMPLETOS REALES (PREGUNTAS 1–3)
-  ===================================================== */
+/* ===== PREGUNTA 1 ===== */
 
-  1: {
-    A: [{ profile: "EVITADOR_FINANCIERO", weight: 3 }],
-    B: [{ profile: "COMPENSADOR_EMOCIONAL", weight: 2 }],
-    C: [{ profile: "RACIONAL_DESCONECTADO", weight: 1 }],
-    D: [{ profile: "CONTROLADOR_ANSIOSO", weight: 2 }],
-    E: [{ profile: "EVITADOR_FINANCIERO", weight: 3 }]
-  },
+Q01: {
+ A: { EVITADOR_FINANCIERO:3 },
+ B: { COMPENSADOR_EMOCIONAL:2 },
+ C: { RACIONAL_DESCONECTADO:1 },
+ D: { CONTROLADOR_ANSIOSO:2 },
+ E: { EVITADOR_FINANCIERO:3 }
+},
 
-  2: {
-    A: [{ profile: "CONTROLADOR_ANSIOSO", weight: 2 }],
-    B: [{ profile: "EVITADOR_FINANCIERO", weight: 2 }],
-    C: [{ profile: "EVITADOR_FINANCIERO", weight: 3 }],
-    D: [{ profile: "CONTROLADOR_ANSIOSO", weight: 3 }],
-    E: [{ profile: "RACIONAL_DESCONECTADO", weight: 1 }]
-  },
+/* ===== PREGUNTA 2 ===== */
 
-  3: {
-    A: [{ profile: "COMPENSADOR_EMOCIONAL", weight: 3 }],
-    B: [{ profile: "COMPENSADOR_EMOCIONAL", weight: 2 }],
-    C: [{ profile: "COMPENSADOR_EMOCIONAL", weight: 1 }],
-    D: [{ profile: "DESORDENADO_CRONICO", weight: 2 }],
-    E: [{ profile: "EVITADOR_FINANCIERO", weight: 2 }]
-  },
+Q02: {
+ A: { CONTROLADOR_ANSIOSO:2 },
+ B: { EVITADOR_FINANCIERO:2 },
+ C: { EVITADOR_FINANCIERO:3 },
+ D: { CONTROLADOR_ANSIOSO:3 },
+ E: { RACIONAL_DESCONECTADO:1 }
+},
 
-  /* =====================================================
-  PLACEHOLDERS ESTRUCTURALES (4–30)
-  COMPLETAR RESPETANDO REGLAS
-  ===================================================== */
+/* ===== PREGUNTA 3 ===== */
 
-  4: placeholderMap(),
-  5: placeholderMap(),
-  6: placeholderMap(),
-  7: placeholderMap(),
-  8: placeholderMap(),
-  9: placeholderMap(),
-  10: placeholderMap(),
-  11: placeholderMap(),
-  12: placeholderMap(),
-  13: placeholderMap(),
-  14: placeholderMap(),
-  15: placeholderMap(),
-  16: placeholderMap(),
-  17: placeholderMap(),
-  18: placeholderMap(),
-  19: placeholderMap(),
-  20: placeholderMap(),
-  21: placeholderMap(),
-  22: placeholderMap(),
-  23: placeholderMap(),
-  24: placeholderMap(),
-  25: placeholderMap(),
-  26: placeholderMap(),
-  27: placeholderMap(),
-  28: placeholderMap(),
-  29: placeholderMap(),
-  30: placeholderMap()
+Q03: {
+ A: { COMPENSADOR_EMOCIONAL:3 },
+ B: { COMPENSADOR_EMOCIONAL:2 },
+ C: { COMPENSADOR_EMOCIONAL:1 },
+ D: { DESORDENADO_CRONICO:2 },
+ E: { EVITADOR_FINANCIERO:2 }
+},
+
+/* ===== PLACEHOLDER SEGURO 4–30 ===== */
+
+Q04: placeholder(),
+Q05: placeholder(),
+Q06: placeholder(),
+Q07: placeholder(),
+Q08: placeholder(),
+Q09: placeholder(),
+Q10: placeholder(),
+Q11: placeholder(),
+Q12: placeholder(),
+Q13: placeholder(),
+Q14: placeholder(),
+Q15: placeholder(),
+Q16: placeholder(),
+Q17: placeholder(),
+Q18: placeholder(),
+Q19: placeholder(),
+Q20: placeholder(),
+Q21: placeholder(),
+Q22: placeholder(),
+Q23: placeholder(),
+Q24: placeholder(),
+Q25: placeholder(),
+Q26: placeholder(),
+Q27: placeholder(),
+Q28: placeholder(),
+Q29: placeholder(),
+Q30: placeholder()
 
 };
 
 
-/* =====================================================
-FUNCIONES INTERNAS
-===================================================== */
+/* ===================================================== */
 
-function placeholderMap() {
-  return {
-    A: [],
-    B: [],
-    C: [],
-    D: [],
-    E: []
-  };
-}
-
-
-/* =====================================================
-VALIDACIÓN DE INTEGRIDAD
-===================================================== */
-
-export function validateScoringMap(map) {
-
-  Object.entries(map).forEach(([q, options]) => {
-
-    ["A","B","C","D","E"].forEach(opt => {
-
-      if (!options[opt]) {
-        throw new Error(`Pregunta ${q} opción ${opt} faltante`);
-      }
-
-      if (options[opt].length > 2) {
-        throw new Error(`Pregunta ${q} opción ${opt} supera 2 perfiles`);
-      }
-
-      options[opt].forEach(item => {
-        if (![1,2,3].includes(item.weight)) {
-          throw new Error(`Peso inválido en P${q} ${opt}`);
-        }
-      });
-
-    });
-
-  });
-
-  return true;
+function placeholder() {
+ return {
+   A:{},
+   B:{},
+   C:{},
+   D:{},
+   E:{}
+ };
 }

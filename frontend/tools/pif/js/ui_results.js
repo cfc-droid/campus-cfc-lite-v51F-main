@@ -23,7 +23,6 @@ import {
 export function renderResults() {
 
     const root = document.getElementById("pif-app");
-
     if (!root) return;
 
     root.innerHTML = "";
@@ -31,22 +30,18 @@ export function renderResults() {
     try {
 
         /* ============================
-           CALCULAR PERFIL + RUTA
-           ============================ */
+           PERFIL + RUTA
+        ============================ */
 
         const answers = getAllAnswers();
 
         const profileKey = calculateProfileKey(answers);
         const route = getRouteForProfile(profileKey);
 
-        if (!route) {
-            throw new Error(`[PIF] Ruta inexistente para perfil ${profileKey}`);
-        }
-
         const profileCopy = PROFILES_COPY_V1[profileKey];
 
         if (!profileCopy) {
-            throw new Error(`[PIF] Copy faltante para perfil ${profileKey}`);
+            throw new Error(`[PIF] Copy faltante ${profileKey}`);
         }
 
         setProfile(profileKey);
@@ -55,7 +50,7 @@ export function renderResults() {
 
         /* ============================
            PANEL BASE
-           ============================ */
+        ============================ */
 
         const panel = document.createElement("div");
         panel.className = "pif-panel";
@@ -63,91 +58,69 @@ export function renderResults() {
 
         /* ============================
            PERFIL
-           ============================ */
+        ============================ */
 
         const profileBlock = document.createElement("div");
         profileBlock.className = "pif-text-block";
 
-        const profileTitle = document.createElement("div");
-        profileTitle.className = "pif-title";
-        profileTitle.textContent = "Perfil detectado";
+        profileBlock.innerHTML = `
+            <div class="pif-title">Perfil detectado</div>
+            <div>${profileCopy.description || ""}</div>
+        `;
 
-        const profileDesc = document.createElement("div");
-        profileDesc.innerHTML = profileCopy.description;
-
-        profileBlock.appendChild(profileTitle);
-        profileBlock.appendChild(profileDesc);
         panel.appendChild(profileBlock);
 
 
         /* ============================
            RUTA
-           ============================ */
+        ============================ */
 
         const routeBlock = document.createElement("div");
         routeBlock.className = "pif-text-block";
 
-        const routeTitle = document.createElement("div");
-        routeTitle.className = "pif-title";
-        routeTitle.textContent = "Ruta activa";
+        const stepsHtml = (route.steps || [])
+            .map(s => `<li><b>${s.title}</b><br>${s.why}</li>`)
+            .join("");
 
-        const routeName = document.createElement("div");
-        routeName.innerHTML = `<b>${route.name}</b>`;
-
-        const stepsList = document.createElement("ol");
-
-        route.steps.forEach(step => {
-            const li = document.createElement("li");
-            li.textContent = step;
-            stepsList.appendChild(li);
-        });
-
-        routeBlock.appendChild(routeTitle);
-        routeBlock.appendChild(routeName);
-        routeBlock.appendChild(stepsList);
+        routeBlock.innerHTML = `
+            <div class="pif-title">Ruta activa</div>
+            <div><b>${route.route_name || ""}</b></div>
+            <ol>${stepsHtml}</ol>
+        `;
 
         panel.appendChild(routeBlock);
 
 
         /* ============================
            RESTRICCIÓN
-           ============================ */
-
-        const restrictionBlock = document.createElement("div");
-        restrictionBlock.className = "pif-text-block";
-
-        const restrictionTitle = document.createElement("div");
-        restrictionTitle.className = "pif-title";
-        restrictionTitle.textContent = "Restricción activa";
+        ============================ */
 
         const firstBlocked = route.blocked_strict?.[0] || "acciones avanzadas";
 
-        const restrictionText = document.createElement("div");
-        restrictionText.innerHTML =
-            RESTRICTION_COPY_V1.replace("[X]", firstBlocked);
+        const restrictionHtml =
+            RESTRICTION_COPY_V1.template(firstBlocked);
 
-        restrictionBlock.appendChild(restrictionTitle);
-        restrictionBlock.appendChild(restrictionText);
+        const restrictionBlock = document.createElement("div");
+        restrictionBlock.className = "pif-text-block";
+        restrictionBlock.innerHTML = `
+            <div class="pif-title">${RESTRICTION_COPY_V1.title}</div>
+            <div>${restrictionHtml}</div>
+        `;
 
         panel.appendChild(restrictionBlock);
 
 
         /* ============================
            PREGUNTA ESPEJO
-           ============================ */
+        ============================ */
 
         const mirrorBlock = document.createElement("div");
         mirrorBlock.className = "pif-text-block";
 
-        const mirrorTitle = document.createElement("div");
-        mirrorTitle.className = "pif-title";
-        mirrorTitle.textContent = "Pregunta final";
-
-        const mirrorQuestion = document.createElement("div");
-        mirrorQuestion.innerHTML = MIRROR_QUESTION_V1.question;
-
-        mirrorBlock.appendChild(mirrorTitle);
-        mirrorBlock.appendChild(mirrorQuestion);
+        mirrorBlock.innerHTML = `
+            <div class="pif-title">Pregunta final</div>
+            <div>${MIRROR_QUESTION_V1.question}</div>
+        `;
 
         const mirrorOptions = document.createElement("div");
 
@@ -185,12 +158,12 @@ export function renderResults() {
 
 
         /* ============================
-           ANTI SOPORTE
-           ============================ */
+           NOTICE FINAL
+        ============================ */
 
         const noticeBlock = document.createElement("div");
         noticeBlock.className = "pif-warning";
-        noticeBlock.innerHTML = FINAL_NOTICE_V1;
+        noticeBlock.innerHTML = FINAL_NOTICE_V1.text;
 
         panel.appendChild(noticeBlock);
 
@@ -199,7 +172,6 @@ export function renderResults() {
 
         actions.appendChild(finalBtn);
         panel.appendChild(actions);
-
 
         root.appendChild(panel);
 

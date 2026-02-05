@@ -1,8 +1,6 @@
 /* ============================================================
    PIF UI RESULTS — CFC CONTRACT V13
    Render perfil + ruta + restricción + espejo + cierre
-   NO scoring
-   NO runtime mutation directa
    ============================================================ */
 
 import { PROFILES_COPY_V1 } from "../data/profiles_copy_v1.js";
@@ -22,206 +20,202 @@ import {
 } from "./state_runtime.js";
 
 
-/* ============================================================
-   PUBLIC RENDER
-   ============================================================ */
-
 export function renderResults() {
 
     const root = document.getElementById("pif-app");
 
-    if (!root) {
-        throw new Error("[PIF] #pif-app no encontrado");
-    }
+    if (!root) return;
 
     root.innerHTML = "";
 
+    try {
 
-    /* ============================
-       CALCULAR PERFIL + RUTA
-       ============================ */
+        /* ============================
+           CALCULAR PERFIL + RUTA
+           ============================ */
 
-    const answers = getAllAnswers();
+        const answers = getAllAnswers();
 
-    const profileKey = calculateProfileKey(answers);
-    const route = getRouteForProfile(profileKey);
+        const profileKey = calculateProfileKey(answers);
+        const route = getRouteForProfile(profileKey);
 
-    setProfile(profileKey);
-    setRoute(route);
+        if (!route) {
+            throw new Error(`[PIF] Ruta inexistente para perfil ${profileKey}`);
+        }
 
+        const profileCopy = PROFILES_COPY_V1[profileKey];
 
-    /* ============================
-       PANEL BASE
-       ============================ */
+        if (!profileCopy) {
+            throw new Error(`[PIF] Copy faltante para perfil ${profileKey}`);
+        }
 
-    const panel = document.createElement("div");
-    panel.className = "pif-panel";
-
-
-    /* ============================
-       PERFIL DETECTADO
-       ============================ */
-
-    const profileBlock = document.createElement("div");
-    profileBlock.className = "pif-text-block";
-
-    const profileTitle = document.createElement("div");
-    profileTitle.className = "pif-title";
-    profileTitle.textContent = "Perfil detectado";
-
-    const profileCopy = PROFILES_COPY_V1[profileKey];
-
-    if (!profileCopy) {
-        throw new Error(`[PIF] Copy faltante para perfil ${profileKey}`);
-    }
-
-    const profileDesc = document.createElement("div");
-    profileDesc.innerHTML = profileCopy.description;
-
-    profileBlock.appendChild(profileTitle);
-    profileBlock.appendChild(profileDesc);
-
-    panel.appendChild(profileBlock);
+        setProfile(profileKey);
+        setRoute(route);
 
 
-    /* ============================
-       RUTA ACTIVA
-       ============================ */
+        /* ============================
+           PANEL BASE
+           ============================ */
 
-    const routeBlock = document.createElement("div");
-    routeBlock.className = "pif-text-block";
-
-    const routeTitle = document.createElement("div");
-    routeTitle.className = "pif-title";
-    routeTitle.textContent = "Ruta activa";
-
-    const routeName = document.createElement("div");
-    routeName.innerHTML = `<b>${route.name}</b>`;
-
-    const stepsList = document.createElement("ol");
-
-    route.steps.forEach(step => {
-
-        const li = document.createElement("li");
-        li.textContent = step;
-
-        stepsList.appendChild(li);
-
-    });
-
-    routeBlock.appendChild(routeTitle);
-    routeBlock.appendChild(routeName);
-    routeBlock.appendChild(stepsList);
-
-    panel.appendChild(routeBlock);
+        const panel = document.createElement("div");
+        panel.className = "pif-panel";
 
 
-    /* ============================
-       RESTRICCIÓN CONTEXTUAL
-       ============================ */
+        /* ============================
+           PERFIL
+           ============================ */
 
-    const restrictionBlock = document.createElement("div");
-    restrictionBlock.className = "pif-text-block";
+        const profileBlock = document.createElement("div");
+        profileBlock.className = "pif-text-block";
 
-    const restrictionTitle = document.createElement("div");
-    restrictionTitle.className = "pif-title";
-    restrictionTitle.textContent = "Restricción activa";
+        const profileTitle = document.createElement("div");
+        profileTitle.className = "pif-title";
+        profileTitle.textContent = "Perfil detectado";
 
-    const restrictionText = document.createElement("div");
+        const profileDesc = document.createElement("div");
+        profileDesc.innerHTML = profileCopy.description;
 
-    const firstBlocked = route.blocked_strict?.[0] || "acciones avanzadas";
-
-    const restrictionTemplate = RESTRICTION_COPY_V1;
-
-    restrictionText.innerHTML = restrictionTemplate.replace("[X]", firstBlocked);
-
-    restrictionBlock.appendChild(restrictionTitle);
-    restrictionBlock.appendChild(restrictionText);
-
-    panel.appendChild(restrictionBlock);
+        profileBlock.appendChild(profileTitle);
+        profileBlock.appendChild(profileDesc);
+        panel.appendChild(profileBlock);
 
 
-    /* ============================
-       PREGUNTA ESPEJO
-       ============================ */
+        /* ============================
+           RUTA
+           ============================ */
 
-    const mirrorBlock = document.createElement("div");
-    mirrorBlock.className = "pif-text-block";
+        const routeBlock = document.createElement("div");
+        routeBlock.className = "pif-text-block";
 
-    const mirrorTitle = document.createElement("div");
-    mirrorTitle.className = "pif-title";
-    mirrorTitle.textContent = "Pregunta final";
+        const routeTitle = document.createElement("div");
+        routeTitle.className = "pif-title";
+        routeTitle.textContent = "Ruta activa";
 
-    const mirrorQuestion = document.createElement("div");
-    mirrorQuestion.innerHTML = MIRROR_QUESTION_V1.question;
+        const routeName = document.createElement("div");
+        routeName.innerHTML = `<b>${route.name}</b>`;
 
-    mirrorBlock.appendChild(mirrorTitle);
-    mirrorBlock.appendChild(mirrorQuestion);
+        const stepsList = document.createElement("ol");
 
-
-    const mirrorOptions = document.createElement("div");
-
-    MIRROR_QUESTION_V1.options.forEach(opt => {
-
-        const label = document.createElement("label");
-        label.className = "pif-option";
-
-        const radio = document.createElement("input");
-        radio.type = "radio";
-        radio.name = "mirror_question";
-        radio.value = opt.key;
-
-        radio.addEventListener("change", () => {
-            setMirrorAnswer(opt.key);
-            finalBtn.disabled = false;
+        route.steps.forEach(step => {
+            const li = document.createElement("li");
+            li.textContent = step;
+            stepsList.appendChild(li);
         });
 
-        label.appendChild(radio);
-        label.appendChild(document.createTextNode(opt.text));
+        routeBlock.appendChild(routeTitle);
+        routeBlock.appendChild(routeName);
+        routeBlock.appendChild(stepsList);
 
-        mirrorOptions.appendChild(label);
-
-    });
-
-    mirrorBlock.appendChild(mirrorOptions);
-    panel.appendChild(mirrorBlock);
+        panel.appendChild(routeBlock);
 
 
-    /* ============================
-       ANTI SOPORTE
-       ============================ */
+        /* ============================
+           RESTRICCIÓN
+           ============================ */
 
-    const noticeBlock = document.createElement("div");
-    noticeBlock.className = "pif-warning";
-    noticeBlock.innerHTML = FINAL_NOTICE_V1;
+        const restrictionBlock = document.createElement("div");
+        restrictionBlock.className = "pif-text-block";
 
-    panel.appendChild(noticeBlock);
+        const restrictionTitle = document.createElement("div");
+        restrictionTitle.className = "pif-title";
+        restrictionTitle.textContent = "Restricción activa";
 
+        const firstBlocked = route.blocked_strict?.[0] || "acciones avanzadas";
 
-    /* ============================
-       BOTÓN FINAL
-       ============================ */
+        const restrictionText = document.createElement("div");
+        restrictionText.innerHTML =
+            RESTRICTION_COPY_V1.replace("[X]", firstBlocked);
 
-    const actions = document.createElement("div");
-    actions.className = "pif-actions";
+        restrictionBlock.appendChild(restrictionTitle);
+        restrictionBlock.appendChild(restrictionText);
 
-    const finalBtn = document.createElement("button");
-    finalBtn.className = "pif-btn";
-    finalBtn.textContent = "Entiendo que este es mi estado actual";
-    finalBtn.disabled = true;
-
-    finalBtn.addEventListener("click", () => {
-        exitToCampus();
-    });
-
-    actions.appendChild(finalBtn);
-    panel.appendChild(actions);
+        panel.appendChild(restrictionBlock);
 
 
-    /* ============================
-       INSERTAR PANEL
-       ============================ */
+        /* ============================
+           PREGUNTA ESPEJO
+           ============================ */
 
-    root.appendChild(panel);
+        const mirrorBlock = document.createElement("div");
+        mirrorBlock.className = "pif-text-block";
 
+        const mirrorTitle = document.createElement("div");
+        mirrorTitle.className = "pif-title";
+        mirrorTitle.textContent = "Pregunta final";
+
+        const mirrorQuestion = document.createElement("div");
+        mirrorQuestion.innerHTML = MIRROR_QUESTION_V1.question;
+
+        mirrorBlock.appendChild(mirrorTitle);
+        mirrorBlock.appendChild(mirrorQuestion);
+
+        const mirrorOptions = document.createElement("div");
+
+        const actions = document.createElement("div");
+        actions.className = "pif-actions";
+
+        const finalBtn = document.createElement("button");
+        finalBtn.className = "pif-btn";
+        finalBtn.textContent = "Entiendo que este es mi estado actual";
+        finalBtn.disabled = true;
+
+        MIRROR_QUESTION_V1.options.forEach(opt => {
+
+            const label = document.createElement("label");
+            label.className = "pif-option";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = "mirror_question";
+            radio.value = opt.key;
+
+            radio.addEventListener("change", () => {
+                setMirrorAnswer(opt.key);
+                finalBtn.disabled = false;
+            });
+
+            label.appendChild(radio);
+            label.appendChild(document.createTextNode(opt.text));
+
+            mirrorOptions.appendChild(label);
+        });
+
+        mirrorBlock.appendChild(mirrorOptions);
+        panel.appendChild(mirrorBlock);
+
+
+        /* ============================
+           ANTI SOPORTE
+           ============================ */
+
+        const noticeBlock = document.createElement("div");
+        noticeBlock.className = "pif-warning";
+        noticeBlock.innerHTML = FINAL_NOTICE_V1;
+
+        panel.appendChild(noticeBlock);
+
+
+        finalBtn.addEventListener("click", exitToCampus);
+
+        actions.appendChild(finalBtn);
+        panel.appendChild(actions);
+
+
+        root.appendChild(panel);
+
+    }
+
+    catch (err) {
+
+        console.error("[PIF RESULTS ERROR]", err);
+
+        root.innerHTML = `
+            <div class="pif-panel">
+                <div class="pif-title">Error calculando resultado</div>
+                <div class="pif-warning">
+                    Revisar consola del navegador.
+                </div>
+            </div>
+        `;
+    }
 }

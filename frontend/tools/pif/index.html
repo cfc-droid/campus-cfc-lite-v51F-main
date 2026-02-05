@@ -1,1 +1,48 @@
-<!-- PIF index placeholder -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PIF — Perfil de Identidad Financiera</title>
+
+  <!-- ✅ BASE dinámico (igual Campus) -->
+  <script>
+    (function () {
+      const isCloudflare = window.location.hostname.includes("pages.dev");
+      const base = isCloudflare ? "/" : "/frontend/";
+      document.write(`<base href="${base}">`);
+    })();
+  </script>
+
+  <!-- ✅ CSS global del Campus -->
+  <link rel="stylesheet" href="css/variables.css?v=20251102" />
+  <link rel="stylesheet" href="css/premium.min.css?v=20251104" />
+
+  <!-- ✅ CSS propio PIF (SIEMPRE después de los globales) -->
+  <link rel="stylesheet" href="tools/pif/pif.css?v=20260205" />
+</head>
+
+<body>
+  <!-- Contenedor único del PIF -->
+  <main class="card" style="max-width: 980px; margin: 24px auto;">
+    <span class="pill">Herramienta</span>
+    <h1 style="margin-top:10px;">PIF — Perfil de Identidad Financiera</h1>
+    <p class="lead" style="margin-bottom:18px;">
+      Responde 30 preguntas. Luego verás tu perfil y tu ruta sugerida.
+    </p>
+
+    <!-- ✅ APP ROOT -->
+    <div id="pif-app"></div>
+
+    <!-- fallback si JS no carga -->
+    <noscript>
+      <p style="margin-top:16px;">
+        Esta herramienta requiere JavaScript habilitado.
+      </p>
+    </noscript>
+  </main>
+
+  <!-- ✅ MAIN (module) -->
+  <script type="module" src="tools/pif/js/main.js?v=20260205"></script>
+</body>
+</html>

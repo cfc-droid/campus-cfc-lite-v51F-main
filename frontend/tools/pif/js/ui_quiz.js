@@ -1,25 +1,16 @@
 /* ============================================================
    PIF UI QUIZ — CFC CONTRACT V13
-   Renderiza cuestionario completo
-   NO calcula perfil
-   NO calcula ruta
-   SOLO captura respuestas
    ============================================================ */
 
 import { QUESTIONS_V1, validateQuestionsCount } from "../data/questions_v1.js";
 import {
     setAnswer,
     getAnswer,
-    isQuizComplete,
-    getAllAnswers
+    isQuizComplete
 } from "./state_runtime.js";
 
 
-/* ============================================================
-   UI QUIZ
-   ============================================================ */
-
-export function renderQuiz(onComplete) {
+export function renderQuiz() {
 
     validateQuestionsCount();
 
@@ -31,18 +22,12 @@ export function renderQuiz(onComplete) {
 
     root.innerHTML = "";
 
-    /* ---------- PANEL ---------- */
-
     const panel = document.createElement("div");
     panel.className = "pif-panel";
-
-    /* ---------- TÍTULO ---------- */
 
     const title = document.createElement("div");
     title.className = "pif-title";
     title.textContent = "Perfil de Identidad Financiera (PIF)";
-
-    /* ---------- MENSAJE FIJO ---------- */
 
     const subtitle = document.createElement("div");
     subtitle.className = "pif-subtitle";
@@ -54,9 +39,6 @@ export function renderQuiz(onComplete) {
     panel.appendChild(title);
     panel.appendChild(subtitle);
 
-    /* ============================================================
-       RENDER PREGUNTAS
-       ============================================================ */
 
     QUESTIONS_V1.forEach((q, index) => {
 
@@ -78,7 +60,6 @@ export function renderQuiz(onComplete) {
             radio.name = `q-${q.id}`;
             radio.value = opt.key;
 
-            /* Restaurar selección si existe */
             if (getAnswer(q.id) === opt.key) {
                 radio.checked = true;
             }
@@ -98,10 +79,6 @@ export function renderQuiz(onComplete) {
     });
 
 
-    /* ============================================================
-       BOTONES
-       ============================================================ */
-
     const actions = document.createElement("div");
     actions.className = "pif-actions";
 
@@ -114,9 +91,9 @@ export function renderQuiz(onComplete) {
 
         if (!isQuizComplete(30)) return;
 
-        if (typeof onComplete === "function") {
-            onComplete(getAllAnswers());
-        }
+        /* 🔥 EVENTO GLOBAL ROUTER */
+        window.dispatchEvent(new CustomEvent("pif:quiz:completed"));
+
     });
 
     actions.appendChild(continueBtn);
@@ -124,10 +101,6 @@ export function renderQuiz(onComplete) {
 
     root.appendChild(panel);
 
-
-    /* ============================================================
-       CONTROL BOTÓN CONTINUAR
-       ============================================================ */
 
     function updateContinueState() {
         continueBtn.disabled = !isQuizComplete(30);

@@ -44,40 +44,44 @@ export function renderResults() {
            CAPA 2 — PERFIL
         ========================= */
 
-        panel.innerHTML += `
-        <div class="pif-title">Perfil detectado</div>
-        <div class="pif-text-block">
-            <b>${profileCopy.name}</b><br><br>
+        const profileBlock = document.createElement("div");
+        profileBlock.innerHTML = `
+            <div class="pif-title">Perfil detectado</div>
+            <div class="pif-text-block">
+                <b>${profileCopy.name}</b><br><br>
 
-            ${profileCopy.description}<br><br>
+                ${profileCopy.description}<br><br>
 
-            <b>Riesgo:</b> ${profileCopy.main_risk}<br>
-            <b>Ilusión común:</b> ${profileCopy.common_illusion}<br>
-            <b>Prioridad real:</b> ${profileCopy.real_priority}<br><br>
+                <b>Riesgo:</b> ${profileCopy.main_risk}<br>
+                <b>Ilusión común:</b> ${profileCopy.common_illusion}<br>
+                <b>Prioridad real:</b> ${profileCopy.real_priority}<br><br>
 
-            <i>${profileCopy.disclaimer}</i>
-        </div>
+                <i>${profileCopy.disclaimer}</i>
+            </div>
         `;
+        panel.appendChild(profileBlock);
 
 
         /* =========================
            CAPA 3 — RUTA
         ========================= */
 
-        panel.innerHTML += `
-        <div class="pif-title">Ruta activa</div>
-        <div class="pif-text-block">
-            <b>${route.route_name}</b>
-            <ol>
-                ${route.steps.map(s => `
-                    <li>
-                        <b>${s.title}</b><br>
-                        ${s.why}
-                    </li>
-                `).join("")}
-            </ol>
-        </div>
+        const routeBlock = document.createElement("div");
+        routeBlock.innerHTML = `
+            <div class="pif-title">Ruta activa</div>
+            <div class="pif-text-block">
+                <b>${route.route_name}</b>
+                <ol>
+                    ${route.steps.map(s => `
+                        <li>
+                            <b>${s.title}</b><br>
+                            ${s.why}
+                        </li>
+                    `).join("")}
+                </ol>
+            </div>
         `;
+        panel.appendChild(routeBlock);
 
 
         /* =========================
@@ -86,12 +90,14 @@ export function renderResults() {
 
         const blocked = route.blocked_strict?.[0] || "acciones avanzadas";
 
-        panel.innerHTML += `
-        <div class="pif-title">Restricción activa</div>
-        <div class="pif-warning">
-            ${RESTRICTION_COPY_V1.template(blocked)}
-        </div>
+        const restrictionBlock = document.createElement("div");
+        restrictionBlock.innerHTML = `
+            <div class="pif-title">Restricción activa</div>
+            <div class="pif-warning">
+                ${RESTRICTION_COPY_V1.template(blocked)}
+            </div>
         `;
+        panel.appendChild(restrictionBlock);
 
 
         /* =========================
@@ -111,20 +117,26 @@ export function renderResults() {
         finalBtn.textContent = "Entiendo que este es mi estado actual";
         finalBtn.disabled = true;
 
+        let mirrorSelected = null;
+
         MIRROR_QUESTION_V1.options.forEach(opt => {
 
             const label = document.createElement("label");
             label.className = "pif-option";
 
-            label.innerHTML = `
-                <input type="radio" name="mirror" value="${opt.key}">
-                ${opt.text}
-            `;
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "mirror";
+            input.value = opt.key;
 
-            label.querySelector("input").addEventListener("change", () => {
+            input.addEventListener("change", () => {
+                mirrorSelected = opt.key;
                 setMirrorAnswer(opt.key);
                 finalBtn.disabled = false;
             });
+
+            label.appendChild(input);
+            label.append(` ${opt.text}`);
 
             mirrorBlock.appendChild(label);
         });
@@ -136,13 +148,26 @@ export function renderResults() {
            AVISO FINAL
         ========================= */
 
-        panel.innerHTML += `
-        <div class="pif-warning">
-            ${FINAL_NOTICE_V1.text}
-        </div>
-        `;
+        const finalNotice = document.createElement("div");
+        finalNotice.className = "pif-warning";
+        finalNotice.innerHTML = FINAL_NOTICE_V1.text;
 
-        finalBtn.onclick = exitToCampus;
+        panel.appendChild(finalNotice);
+
+
+        /* =========================
+           BOTÓN FINAL
+        ========================= */
+
+        finalBtn.addEventListener("click", () => {
+
+            if (!mirrorSelected) {
+                return;
+            }
+
+            exitToCampus();
+        });
+
         panel.appendChild(finalBtn);
 
         root.appendChild(panel);

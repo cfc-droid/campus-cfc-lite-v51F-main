@@ -42,21 +42,16 @@ function validateScoringMap() {
 
 /* ============================================================
    QID NORMALIZER
-   - Acepta qid como: 1 | "1" | "Q01" | "q01"
-   - Busca en SCORING_MAP_V1 por ambas variantes
    ============================================================ */
 
 function resolveQuestionMap(qidRaw) {
 
-    // 1) intento directo
     if (SCORING_MAP_V1[qidRaw]) {
         return { key: qidRaw, map: SCORING_MAP_V1[qidRaw] };
     }
 
-    // 2) normalización string
     const s = String(qidRaw).trim();
 
-    // "Q01" -> 1 (y viceversa)
     if (/^q\d{1,3}$/i.test(s)) {
 
         const n = parseInt(s.slice(1), 10);
@@ -72,7 +67,6 @@ function resolveQuestionMap(qidRaw) {
         }
     }
 
-    // "1" -> 1 y "Q01"
     if (/^\d{1,3}$/.test(s)) {
 
         const n = parseInt(s, 10);
@@ -130,7 +124,7 @@ function accumulateScores(answersByQid) {
 
 /* ============================================================
    TIE BREAKER BY RISK PRIORITY
-   delta ≤ 2 → resolve by risk order
+   delta < 3 → resolve by risk order
    ============================================================ */
 
 function resolveTieByRisk(scoreByProfile) {
@@ -153,11 +147,10 @@ function resolveTieByRisk(scoreByProfile) {
 
     const delta = topScore - secondScore;
 
-    if (delta > 2) {
+    // 🔥 AJUSTE CLÍNICO (único cambio real)
+    if (delta >= 3) {
         return topProfile;
     }
-
-    /* --- empate psicológico --- */
 
     for (const riskProfile of RISK_PRIORITY_V1) {
 

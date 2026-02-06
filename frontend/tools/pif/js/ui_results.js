@@ -1,4 +1,4 @@
-import { PROFILES_COPY_V1 } from "../data/profiles_copy_v1.js";
+import { PROFILES_COPY_V1 } from "../copy/profiles_copy_v1.js";
 import { RESTRICTION_COPY_V1 } from "../data/restriction_copy_v1.js";
 import { MIRROR_QUESTION_V1 } from "../data/mirror_question_v1.js";
 import { FINAL_NOTICE_V1 } from "../data/final_notice_v1.js";
@@ -29,6 +29,10 @@ export function renderResults() {
 
         const profileCopy = PROFILES_COPY_V1[profileKey];
 
+        if (!profileCopy) {
+            throw new Error(`Profile copy inexistente para ${profileKey}`);
+        }
+
         setProfile(profileKey);
         setRoute(route);
 
@@ -43,11 +47,15 @@ export function renderResults() {
         panel.innerHTML += `
         <div class="pif-title">Perfil detectado</div>
         <div class="pif-text-block">
-            <b>${profileCopy.title}</b><br><br>
+            <b>${profileCopy.name}</b><br><br>
+
             ${profileCopy.description}<br><br>
-            <b>Riesgo:</b> ${profileCopy.risk}<br>
-            <b>Ilusión común:</b> ${profileCopy.illusion}<br>
-            <b>Prioridad real:</b> ${profileCopy.priority}
+
+            <b>Riesgo:</b> ${profileCopy.main_risk}<br>
+            <b>Ilusión común:</b> ${profileCopy.common_illusion}<br>
+            <b>Prioridad real:</b> ${profileCopy.real_priority}<br><br>
+
+            <i>${profileCopy.disclaimer}</i>
         </div>
         `;
 
@@ -106,6 +114,7 @@ export function renderResults() {
         MIRROR_QUESTION_V1.options.forEach(opt => {
 
             const label = document.createElement("label");
+            label.className = "pif-option";
 
             label.innerHTML = `
                 <input type="radio" name="mirror" value="${opt.key}">

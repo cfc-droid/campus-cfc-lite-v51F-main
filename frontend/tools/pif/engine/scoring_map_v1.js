@@ -1,7 +1,7 @@
 /* =========================================================
 scoring_map_v1.js
 CORE MATEMÁTICO DEL PIF
-SAFE MVP — evita scoring vacío
+SAFE MVP — evita scoring vacío SIN sesgo dominante
 ========================================================= */
 
 export const SCORING_MAP_V1 = {
@@ -67,16 +67,16 @@ export const SCORING_MAP_V1 = {
 
 
 /* =====================================================
-SAFE PLACEHOLDER
-Siempre suma mínimo scoring
+SAFE PLACEHOLDER SIN SESGO
+Distribuye scoring mínimo entre perfiles
 ===================================================== */
 
 function safePlaceholder() {
   return {
-    A: { DESORDENADO_CRONICO: 1 },
-    B: { DESORDENADO_CRONICO: 1 },
+    A: { EVITADOR_FINANCIERO: 1 },
+    B: { COMPENSADOR_EMOCIONAL: 1 },
     C: { DESORDENADO_CRONICO: 1 },
-    D: { DESORDENADO_CRONICO: 1 },
-    E: { DESORDENADO_CRONICO: 1 }
+    D: { CONTROLADOR_ANSIOSO: 1 },
+    E: { RACIONAL_DESCONECTADO: 1 }
   };
 }

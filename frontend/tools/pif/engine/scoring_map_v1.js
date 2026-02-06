@@ -1,7 +1,7 @@
 /* =========================================================
 scoring_map_v1.js
 CORE MATEMÁTICO DEL PIF
-SAFE MVP — evita scoring vacío SIN sesgo dominante
+SAFE MVP — balanceado para 9 perfiles
 ========================================================= */
 
 export const SCORING_MAP_V1 = {
@@ -10,8 +10,8 @@ export const SCORING_MAP_V1 = {
   1: {
     A: { EVITADOR_FINANCIERO: 3 },
     B: { COMPENSADOR_EMOCIONAL: 2 },
-    C: { RACIONAL_DESCONECTADO: 1 },
-    D: { CONTROLADOR_ANSIOSO: 2 },
+    C: { RACIONAL_DESCONECTADO: 2 },
+    D: { CONTROLADOR_ANSIOSO: 3 },
     E: { EVITADOR_FINANCIERO: 3 }
   },
 
@@ -21,7 +21,7 @@ export const SCORING_MAP_V1 = {
     B: { EVITADOR_FINANCIERO: 2 },
     C: { EVITADOR_FINANCIERO: 3 },
     D: { CONTROLADOR_ANSIOSO: 3 },
-    E: { RACIONAL_DESCONECTADO: 1 }
+    E: { RACIONAL_DESCONECTADO: 2 }
   },
 
   /* ===== PREGUNTA 3 ===== */
@@ -33,7 +33,7 @@ export const SCORING_MAP_V1 = {
     E: { EVITADOR_FINANCIERO: 2 }
   },
 
-  /* ===== PLACEHOLDER SEGURO 4–30 ===== */
+  /* ===== PLACEHOLDER 4–30 ===== */
 
   4: safePlaceholder(),
   5: safePlaceholder(),
@@ -67,16 +67,33 @@ export const SCORING_MAP_V1 = {
 
 
 /* =====================================================
-SAFE PLACEHOLDER SIN SESGO
-Distribuye scoring mínimo entre perfiles
+SAFE PLACEHOLDER SIN SESGO ENTRE 9 PERFILES
 ===================================================== */
 
 function safePlaceholder() {
+
   return {
+
     A: { EVITADOR_FINANCIERO: 1 },
+
     B: { COMPENSADOR_EMOCIONAL: 1 },
+
     C: { DESORDENADO_CRONICO: 1 },
+
     D: { CONTROLADOR_ANSIOSO: 1 },
-    E: { RACIONAL_DESCONECTADO: 1 }
+
+    E: { AHORRADOR_SIN_PROPOSITO: 1 },
+
+    /* distribución secundaria pseudo aleatoria */
+
+    F: { ASPIRACIONAL_DESALINEADO: 1 },
+
+    G: { INVERSOR_PREMATURO: 1 },
+
+    H: { RACIONAL_DESCONECTADO: 1 },
+
+    I: { ORDENADO_FUNCIONAL: 1 }
+
   };
+
 }
